@@ -44,12 +44,13 @@ async def scan_url(
     await db.commit()
     await db.refresh(scan)
     from app.workers.tasks import scan_url as scan_url_task
-    scan_url_task.delay(str(scan.id), data.url)
+    background_tasks.add_task(scan_url_task, str(scan.id), data.url)
     return {"scan_id": str(scan.id), "status": "pending"}
 
 
 @router.post("/email")
 async def scan_email(
+    background_tasks: BackgroundTasks,
     file: UploadFile = File(None),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
@@ -66,13 +67,14 @@ async def scan_email(
     await db.commit()
     await db.refresh(scan)
     from app.workers.tasks import scan_email as scan_email_task
-    scan_email_task.delay(str(scan.id), content, file.filename if file else "raw_email")
+    background_tasks.add_task(scan_email_task, str(scan.id), content, file.filename if file else "raw_email")
     return {"scan_id": str(scan.id), "status": "pending"}
 
 
 @router.post("/sms")
 async def scan_sms(
     data: SMSScanRequest,
+    background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
@@ -87,13 +89,14 @@ async def scan_sms(
     await db.commit()
     await db.refresh(scan)
     from app.workers.tasks import scan_sms as scan_sms_task
-    scan_sms_task.delay(str(scan.id), data.message)
+    background_tasks.add_task(scan_sms_task, str(scan.id), data.message)
     return {"scan_id": str(scan.id), "status": "pending"}
 
 
 @router.post("/domain")
 async def scan_domain(
     domain: str,
+    background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
@@ -108,13 +111,14 @@ async def scan_domain(
     await db.commit()
     await db.refresh(scan)
     from app.workers.tasks import scan_domain as scan_domain_task
-    scan_domain_task.delay(str(scan.id), domain)
+    background_tasks.add_task(scan_domain_task, str(scan.id), domain)
     return {"scan_id": str(scan.id), "status": "pending"}
 
 
 @router.post("/qr")
 async def scan_qr(
     data: QRScanRequest,
+    background_tasks: BackgroundTasks,
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
@@ -129,7 +133,7 @@ async def scan_qr(
     await db.commit()
     await db.refresh(scan)
     from app.workers.tasks import scan_qr as scan_qr_task
-    scan_qr_task.delay(str(scan.id), data.extracted_text)
+    background_tasks.add_task(scan_qr_task, str(scan.id), data.extracted_text)
     return {"scan_id": str(scan.id), "status": "pending"}
 
 

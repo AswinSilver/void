@@ -25,32 +25,27 @@ async def update_db_record(scan_id: str, result: dict):
             scan.completed_at = datetime.utcnow()
             await db.commit()
 
-@celery_app.task(name="app.workers.tasks.scan_url", bind=True)
-def scan_url(self, scan_id: str, url: str):
-    result = asyncio.run(perform_url_scan(url))
-    asyncio.run(update_db_record(scan_id, result))
+async def scan_url(scan_id: str, url: str):
+    result = await perform_url_scan(url)
+    await update_db_record(scan_id, result)
     return {"scan_id": scan_id, "status": "done"}
 
-@celery_app.task(name="app.workers.tasks.scan_email", bind=True)
-def scan_email(self, scan_id: str, file_content: bytes, filename: str):
-    result = asyncio.run(perform_email_scan(file_content, filename))
-    asyncio.run(update_db_record(scan_id, result))
+async def scan_email(scan_id: str, file_content: bytes, filename: str):
+    result = await perform_email_scan(file_content, filename)
+    await update_db_record(scan_id, result)
     return {"scan_id": scan_id, "status": "done"}
 
-@celery_app.task(name="app.workers.tasks.scan_domain", bind=True)
-def scan_domain(self, scan_id: str, domain: str):
-    result = asyncio.run(perform_domain_scan(domain))
-    asyncio.run(update_db_record(scan_id, result))
+async def scan_domain(scan_id: str, domain: str):
+    result = await perform_domain_scan(domain)
+    await update_db_record(scan_id, result)
     return {"scan_id": scan_id, "status": "done"}
 
-@celery_app.task(name="app.workers.tasks.scan_sms", bind=True)
-def scan_sms(self, scan_id: str, message: str):
-    result = asyncio.run(perform_sms_scan(message))
-    asyncio.run(update_db_record(scan_id, result))
+async def scan_sms(scan_id: str, message: str):
+    result = await perform_sms_scan(message)
+    await update_db_record(scan_id, result)
     return {"scan_id": scan_id, "status": "done"}
 
-@celery_app.task(name="app.workers.tasks.scan_qr", bind=True)
-def scan_qr(self, scan_id: str, extracted_text: str):
-    result = asyncio.run(perform_qr_scan(extracted_text))
-    asyncio.run(update_db_record(scan_id, result))
+async def scan_qr(scan_id: str, extracted_text: str):
+    result = await perform_qr_scan(extracted_text)
+    await update_db_record(scan_id, result)
     return {"scan_id": scan_id, "status": "done"}
