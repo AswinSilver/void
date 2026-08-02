@@ -1,0 +1,49 @@
+services:
+  - type: web
+    name: void-api
+    env: python
+    buildCommand: "pip install -r backend/requirements.txt && cd backend && alembic upgrade head"
+    startCommand: "cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: DATABASE_URL
+        fromDatabase:
+          name: void-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: void-redis
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: FRONTEND_URL
+        value: "https://your-vercel-app-url.vercel.app" # REPLACE THIS WITH VERCEL URL
+
+  - type: worker
+    name: void-celery
+    env: python
+    buildCommand: "pip install -r backend/requirements.txt"
+    startCommand: "cd backend && celery -A app.workers.celery_app worker --loglevel=info -Q scans"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+      - key: DATABASE_URL
+        fromDatabase:
+          name: void-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: void-redis
+          property: connectionString
+
+  - type: redis
+    name: void-redis
+    ipAllowList: [] # internal connections only
+
+databases:
+  - name: void-db
+    databaseName: void
+    user: void_user
