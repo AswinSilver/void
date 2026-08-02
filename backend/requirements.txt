@@ -1,0 +1,66 @@
+# Core
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+pydantic==2.9.2
+pydantic-settings==2.5.2
+python-multipart==0.0.9
+
+# Database
+sqlalchemy[asyncio]==2.0.35
+asyncpg==0.29.0
+alembic==1.13.3
+psycopg2-binary==2.9.9
+
+# Auth
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+httpx==0.27.2
+
+# Celery / Redis
+celery==5.4.0
+redis==5.1.1
+flower==2.0.1
+
+# AI / LangChain
+langchain==0.3.7
+langchain-openai==0.2.9
+langchain-google-genai==2.0.7
+langchain-groq==0.2.1
+openai==1.52.2
+
+# Email parsing
+mail-parser==3.15.0
+email-validator==2.2.0
+
+# DNS / WHOIS / Network
+dnspython==2.7.0
+python-whois==0.9.4
+requests==2.32.3
+
+# Screenshot / Browser
+playwright==1.48.0
+
+# Storage / MinIO
+minio==7.2.10
+boto3==1.35.40
+
+# PDF / Reports
+weasyprint==62.3
+jinja2==3.1.4
+markdown==3.7
+
+# OCR
+Pillow==10.4.0
+pytesseract==0.3.13
+
+# Security / Scanning
+pycryptodome==3.21.0
+python-magic==0.4.27
+yara-python==4.5.2
+
+# Utilities
+python-dotenv==1.0.1
+aiofiles==24.1.0
+structlog==24.4.0
+tenacity==9.0.0
+cachetools==5.5.0
